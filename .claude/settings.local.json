@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(find:*)",
+      "Bash(node -e \"\nconst url = ''https://yresrhownnpgdpfsttco.supabase.co'';\nconst key = ''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyZXNyaG93bm5wZ2RwZnN0dGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4NzkzMzEsImV4cCI6MjA4MTIzOTMzMX0.8s550ruNqw2SFlyW5XT82eOoxYlX0lNAENQAyavuOxI'';\n\nfetch(url + ''/rest/v1/'', {\n  headers: {\n    ''apikey'': key,\n    ''Authorization'': ''Bearer '' + key\n  }\n}).then(r => {\n  console.log(''Status:'', r.status);\n  return r.text();\n}).then(t => console.log(''Response:'', t))\n.catch(e => console.log(''Error:'', e.message));\n\")",
+      "Bash(node --version:*)",
+      "Bash(npm --version:*)",
+      "Bash(gh pr list:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
+}
