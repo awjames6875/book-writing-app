@@ -15,6 +15,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 9. **TOOL USE SUMMARIES**: After completing a task that involves tool use, provide a quick summary of the work done
 10. **IMPLEMENT BY DEFAULT**: Implement changes rather than only suggesting them. If intent is unclear, infer the most useful action and proceed using tools to discover missing details. Infer whether a tool call is intended and act accordingly.
 11. **PARALLEL TOOL CALLS**: If calling multiple tools with no dependencies, make all independent calls in parallel. If calls depend on previous results, call them sequentially. Never use placeholders or guess missing parameters.
+12. **NO SPECULATION**: Never speculate about code you haven't opened. Read files before answering questions about them. Investigate relevant files BEFORE answering codebase questions. Give grounded, hallucination-free answers.
+13. **NO OVER-ENGINEERING**: Only make changes directly requested or clearly necessary. Keep solutions simple. Don't add features, refactoring, or improvements beyond what was asked. Don't create abstractions for one-time operations.
+14. **EXPLORE BEFORE EDITING**: ALWAYS read and understand relevant files before proposing code edits. Review codebase style, conventions, and abstractions before implementing new features.
+15. **GENERAL SOLUTIONS**: Write general-purpose solutions, not test-specific hacks. Don't hard-code values. If tests are incorrect, inform the user rather than working around them.
+16. **STATE TRACKING**: For complex tasks, track progress in structured formats. Use git for state tracking. Focus on incremental progress - steady advances on a few things at a time.
+17. **CLEAN UP**: Remove temporary files, scripts, or helper files created during iteration at the end of the task.
+18. **THOROUGH RESEARCH**: For complex research, develop competing hypotheses, track confidence levels, self-critique your approach, and break down tasks systematically.
 
 ---
 
