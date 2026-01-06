@@ -17,7 +17,7 @@
         "LOG_LEVEL": "error",
         "DISABLE_CONSOLE_OUTPUT": "true",
         "N8N_API_URL": "https://awjames.app.n8n.cloud",
-        "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YzY5OGEzYy0yYmM0LTRkNDYtYTZiZS1iNWM5MDlhOWM0OGYiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY1OTQxMzc1LCJleHAiOjE3Njg0NTYxMDB9.vAU2HGHFxS-MfHvYgZ6epzWuFpu0Qu11aTV6AyHpJhg"
+        "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YzY5OGEzYy0yYmM0LTRkNDYtYTZiZS1iNWM5MDlhOWM0OGYiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY1OTU1Njg4LCJleHAiOjE3Njg1NDMyMDB9.pt0aYIkavY-YfSnecqzr8HswTw6K3nVFakodofslADo"
       }
     }
   }
