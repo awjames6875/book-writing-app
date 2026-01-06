@@ -113,6 +113,9 @@ export default async function ProjectDetailPage({
             <Link href={`/projects/${id}/questions`}>Manage Questions</Link>
           </Button>
           <Button variant="outline" asChild>
+            <Link href={`/projects/${id}/prep`}>Interview Prep</Link>
+          </Button>
+          <Button variant="outline" asChild>
             <Link href={`/projects/${id}/record`}>Record Session</Link>
           </Button>
           <Button variant="outline" asChild>
@@ -120,6 +123,12 @@ export default async function ProjectDetailPage({
           </Button>
           <Button variant="outline" asChild>
             <Link href={`/projects/${id}/quotes`}>Gold Quotes</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href={`/projects/${id}/characters`}>Characters</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href={`/projects/${id}/gaps`}>Gap Analysis</Link>
           </Button>
         </CardContent>
       </Card>

@@ -378,6 +378,11 @@ export type Database = {
           status: Database["public"]["Enums"]["question_status"] | null
           text: string
           updated_at: string | null
+          section: string | null
+          prep_guide: string | null
+          memory_prompts: string[] | null
+          starter_phrase: string | null
+          question_number: number | null
         }
         Insert: {
           chapter_id?: string | null
@@ -390,6 +395,11 @@ export type Database = {
           status?: Database["public"]["Enums"]["question_status"] | null
           text: string
           updated_at?: string | null
+          section?: string | null
+          prep_guide?: string | null
+          memory_prompts?: string[] | null
+          starter_phrase?: string | null
+          question_number?: number | null
         }
         Update: {
           chapter_id?: string | null
@@ -402,6 +412,11 @@ export type Database = {
           status?: Database["public"]["Enums"]["question_status"] | null
           text?: string
           updated_at?: string | null
+          section?: string | null
+          prep_guide?: string | null
+          memory_prompts?: string[] | null
+          starter_phrase?: string | null
+          question_number?: number | null
         }
         Relationships: [
           {
