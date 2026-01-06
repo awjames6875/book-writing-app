@@ -1,70 +1,38 @@
-# Auth + Dashboard Implementation
+# Character/People Tracker Implementation
 
-## Completed Tasks
+## Plan
 
-- [x] Create profile auto-creation trigger in Supabase
-- [x] Create auth callback route
-- [x] Create auth layout and login page
-- [x] Create Navbar and UserMenu components
-- [x] Create dashboard layout and home page
-- [x] Create projects API routes
-- [x] Create ProjectCard and CreateProjectDialog components
-- [x] Create projects list page
+Implement the Character/People Tracker feature for StoryForge following existing patterns from Quotes feature.
 
-## Review
+## Tasks
 
-### Files Created
+- [ ] Create API route `src/app/api/projects/[id]/characters/route.ts` (GET list, POST create)
+- [ ] Create API route `src/app/api/characters/[id]/route.ts` (GET single, PATCH update, DELETE)
+- [ ] Create `src/components/CharacterCard.tsx` component
+- [ ] Create `src/components/AddCharacterDialog.tsx` component
+- [ ] Create `src/app/(dashboard)/projects/[id]/characters/page.tsx` page
+- [ ] Add "Characters" button to Quick Actions in project page
+- [ ] Run `npm run build` to verify no errors
 
-**Database**
-- Applied migration `create_profile_on_signup` - Trigger that auto-creates profile row when user signs up via Google OAuth
+## Reference Files
 
-**Auth Flow**
-- `src/app/auth/callback/route.ts` - Handles OAuth callback, exchanges code for session
-- `src/app/(auth)/layout.tsx` - Centered layout with StoryForge branding
-- `src/app/(auth)/login/page.tsx` - "Sign in with Google" button with Suspense wrapper
+- API pattern: `src/app/api/projects/[id]/quotes/route.ts`, `src/app/api/quotes/[id]/route.ts`
+- Component pattern: `src/components/QuoteCard.tsx`, `src/components/EditQuoteDialog.tsx`
+- Page pattern: `src/app/(dashboard)/projects/[id]/quotes/page.tsx`
+- Types: `src/types/database.ts` (characters table already defined)
 
-**Dashboard**
-- `src/app/(dashboard)/layout.tsx` - Dashboard shell with Navbar
-- `src/app/(dashboard)/dashboard/page.tsx` - Welcome message, project count, quick start
-- `src/app/(dashboard)/projects/page.tsx` - Projects list with create button and empty state
+## Database Schema (Already Exists)
 
-**Components**
-- `src/components/Navbar.tsx` - Top navigation with links and user menu
-- `src/components/UserMenu.tsx` - User avatar, name, sign out button
-- `src/components/ProjectCard.tsx` - Project card with title, description, status
-- `src/components/CreateProjectDialog.tsx` - Modal form for creating projects
-
-**API Routes**
-- `src/app/api/projects/route.ts` - GET (list) and POST (create) projects
-- `src/app/api/projects/[id]/route.ts` - GET, PATCH, DELETE single project
-
-### Routes Available
-- `/` - Landing page (existing)
-- `/login` - Google OAuth login
-- `/dashboard` - Dashboard home (protected)
-- `/projects` - Projects list (protected)
-- `/auth/callback` - OAuth callback handler
-
-### Manual Setup Required
-
-Before auth works, configure Google OAuth in Supabase Dashboard:
-
-1. Go to **Authentication > Providers > Google**
-2. Enable Google provider
-3. Add OAuth credentials from Google Cloud Console:
-   - Create OAuth 2.0 Client ID at https://console.cloud.google.com/apis/credentials
-   - Authorized redirect URI: `https://yresrhownnpgdpfsttco.supabase.co/auth/v1/callback`
-4. Copy Client ID and Client Secret to Supabase
-
-### Testing
-
-```bash
-cd storyforge
-npm run dev
+```typescript
+characters: {
+  id: string
+  project_id: string
+  name: string
+  role: string | null
+  description: string | null
+  chapters_appearing: number[] | null
+  notes: string | null
+  created_at: string | null
+  updated_at: string | null
+}
 ```
-
-1. Visit http://localhost:3000/login
-2. Click "Sign in with Google"
-3. After authentication, you'll be redirected to /dashboard
-4. Navigate to /projects to see project list
-5. Create a new project using the "New Project" button

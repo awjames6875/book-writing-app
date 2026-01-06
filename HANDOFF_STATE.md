@@ -1,27 +1,33 @@
 # Handoff State
 
-**Generated**: 2025-12-17
+**Generated**: 2026-01-06
 **IDE**: Ready for any IDE
-**Status**: Voice Recording + Transcription Feature COMPLETE
+**Status**: Voice DNA + Gold Quotes + Content Ingestion COMPLETE
 
 ---
 
 ## What Was Completed This Session
 
-### Voice Recording + Transcription Feature (NEW)
-Full implementation of in-browser voice recording with:
-- Animated waveform visualization (wavesurfer.js)
-- Post-recording transcription via OpenAI Whisper
-- Both question workflows: select question first OR record freely
-- Full CRUD for recordings
-- Status polling while transcribing
+### Voice DNA System (NEW)
+- Voice pattern extraction from transcripts (phrases, rhythms, teaching style, stories, quotes)
+- Voice confidence scoring (0-100 based on pattern count)
+- UI components: VoiceDnaViewer, VoiceConfidenceDashboard
 
-**12 new files created** (see below)
+### Gold Quotes Database (NEW)
+- Automatic extraction during transcript analysis
+- Quote management UI with edit/delete
+- Filter by category and social media readiness
+
+### Content Ingestion Engine (NEW)
+- Sources page for uploading text/PDF content
+- Content analysis and chunk embedding
+- Storage integration
 
 ### Previous Sessions
 - Google OAuth Authentication
 - Dashboard + Projects list
 - Project detail with chapters management
+- Voice Recording + Transcription
 
 ---
 
@@ -33,51 +39,63 @@ Full implementation of in-browser voice recording with:
 | `/dashboard` | Dashboard home |
 | `/projects` | Projects list |
 | `/projects/[id]` | Project detail with chapters |
-| `/projects/[id]/record` | **NEW: Recording studio** |
-| `/api/projects` | Projects API (GET/POST) |
-| `/api/projects/[id]` | Single project (GET/PATCH/DELETE) |
-| `/api/projects/[id]/chapters` | Chapters API (GET/POST) |
-| `/api/projects/[id]/questions` | **NEW: Questions API (GET/POST)** |
-| `/api/projects/[id]/recordings` | **NEW: Recordings API (GET/POST)** |
-| `/api/projects/[id]/recordings/upload` | **NEW: Upload audio** |
-| `/api/recordings/[id]` | **NEW: Single recording (GET/DELETE)** |
-| `/api/recordings/[id]/transcribe` | **NEW: Trigger transcription** |
+| `/projects/[id]/record` | Recording studio |
+| `/projects/[id]/questions` | Question management |
+| `/projects/[id]/sources` | **NEW: Sources/content library** |
+| `/projects/[id]/quotes` | **NEW: Gold quotes library** |
+| `/api/projects/[id]/voice-dna` | **NEW: Voice DNA patterns** |
+| `/api/projects/[id]/voice-confidence` | **NEW: Confidence score** |
+| `/api/projects/[id]/quotes` | **NEW: Quotes API** |
+| `/api/quotes/[id]` | **NEW: Single quote CRUD** |
+| `/api/projects/[id]/sources` | **NEW: Sources API** |
+| `/api/sources/[id]` | **NEW: Single source CRUD** |
 
 ---
 
-## Files Created This Session (Voice Recording)
+## Uncommitted Files (24 files)
 
-### Services & Types
+### Voice DNA System
 ```
-src/lib/ai/whisper.ts                    # OpenAI Whisper wrapper
-src/types/wavesurfer.d.ts                # TypeScript declarations
-```
-
-### API Routes
-```
-src/app/api/projects/[id]/recordings/route.ts        # List & create
-src/app/api/projects/[id]/recordings/upload/route.ts # Upload audio
-src/app/api/recordings/[id]/route.ts                 # Get & delete
-src/app/api/recordings/[id]/transcribe/route.ts      # Transcription
-src/app/api/projects/[id]/questions/route.ts         # Questions API
+src/lib/ai/voice-dna-analyzer.ts
+src/lib/ai/voice-confidence-calculator.ts
+src/components/VoiceDnaViewer.tsx
+src/components/VoiceConfidenceDashboard.tsx
+src/app/api/projects/[id]/voice-dna/route.ts
+src/app/api/projects/[id]/voice-confidence/route.ts
 ```
 
-### UI Components
+### Gold Quotes Database
 ```
-src/components/AudioRecorder.tsx         # Recording UI with waveform
-src/components/RecordingsList.tsx        # Past recordings display
-src/components/QuestionSelector.tsx      # Optional question picker
-```
-
-### Pages
-```
-src/app/(dashboard)/projects/[id]/record/page.tsx            # Server page
-src/app/(dashboard)/projects/[id]/record/RecordingStudio.tsx # Client component
+src/components/QuoteCard.tsx
+src/components/QuotesLibrary.tsx
+src/components/EditQuoteDialog.tsx
+src/app/(dashboard)/projects/[id]/quotes/page.tsx
+src/app/api/projects/[id]/quotes/route.ts
+src/app/api/quotes/[id]/route.ts
 ```
 
-### Database Migration
+### Content Ingestion (Sources)
 ```
-supabase/migrations/002_recordings_storage.sql  # Storage bucket + RLS
+src/components/AddSourceDialog.tsx
+src/components/SourceCard.tsx
+src/app/(dashboard)/projects/[id]/sources/page.tsx
+src/app/api/projects/[id]/sources/route.ts
+src/app/api/sources/[id]/route.ts
+src/lib/ai/content-analyzer.ts
+```
+
+### Supporting Files
+```
+src/components/ui/badge.tsx
+src/components/ui/progress.tsx
+src/app/api/transcripts/[id]/analyze/route.ts
+supabase/migrations/004_sources_storage.sql
+```
+
+### Modified
+```
+src/app/(dashboard)/projects/[id]/page.tsx  # Added Quick Action buttons
+package.json / package-lock.json            # Added @radix-ui/react-progress
 ```
 
 ---
@@ -85,21 +103,26 @@ supabase/migrations/002_recordings_storage.sql  # Storage bucket + RLS
 ## Next Steps When Resuming
 
 ### BEFORE TESTING (Required)
-1. **Run Supabase migration** to create storage bucket:
+1. **Start Docker Desktop**
+2. **Run Supabase migration**:
    ```bash
-   npx supabase db push
-   # OR run SQL from 002_recordings_storage.sql in Supabase dashboard
+   npx supabase db reset
    ```
 
-2. **Test the feature**:
-   - Navigate to `/projects/[project-id]/record`
-   - Grant microphone permission
-   - Record, save, watch transcription
+3. **Test the features**:
+   - Navigate to `/projects/[id]/sources` - upload text/PDF
+   - Navigate to `/projects/[id]/quotes` - view gold quotes
+   - Check Voice DNA section on project detail page
 
-### Future Features
-- Source Brain (upload research, RAG chat)
-- Voice Guardian (author voice profile)
-- Chapter Forge (generate drafts)
+### Features Remaining (~60%)
+- Character/People Tracker
+- Competitive Analysis Engine
+- Interview Prep System
+- AI Ghostwriting Engine
+- RAG Chat Interface
+- Manuscript Assembly
+- Gap Analysis
+- Export System
 
 ---
 
@@ -107,7 +130,7 @@ supabase/migrations/002_recordings_storage.sql  # Storage bucket + RLS
 
 **Create `.env.local`** in `storyforge/`:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://yresrhownnpgdpfsttco.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_key
 ANTHROPIC_API_KEY=sk-ant-...
@@ -119,11 +142,11 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 ## Environment Checklist
 
-- [x] wavesurfer.js installed
-- [ ] Supabase storage bucket created (run migration)
-- [x] OpenAI API key configured (for Whisper)
+- [ ] Docker Desktop running
+- [ ] Supabase migration applied (`npx supabase db reset`)
+- [x] @radix-ui/react-progress installed
 - [x] Build passes: `npm run build`
-- [x] Lint passes: `npm run lint`
+- [x] OpenAI API key configured
 
 ---
 
@@ -132,14 +155,13 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```bash
 cd storyforge
 npm install              # If dependencies missing
-npx supabase start       # Start local database
-npx supabase db push     # Apply migrations (create storage bucket)
+npx supabase start       # Start local database (Docker required)
+npx supabase db reset    # Apply migrations
 npm run dev              # Start dev server
 ```
 
-Visit http://localhost:3000/projects/[id]/record to test recording.
+Visit http://localhost:3000/projects to test features.
 
 ---
 
-**Last Updated**: 2025-12-17
-**Supabase Project**: yresrhownnpgdpfsttco
+**Last Updated**: 2026-01-06

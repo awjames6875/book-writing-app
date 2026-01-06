@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChapterCard } from '@/components/ChapterCard'
 import { CreateChapterDialog } from '@/components/CreateChapterDialog'
 import { ProjectStats } from '@/components/ProjectStats'
+import { VoiceDnaViewer } from '@/components/VoiceDnaViewer'
+import { VoiceConfidenceDashboard } from '@/components/VoiceConfidenceDashboard'
 
 const statusLabels: Record<string, string> = {
   draft: 'Draft',
@@ -116,8 +118,24 @@ export default async function ProjectDetailPage({
           <Button variant="outline" asChild>
             <Link href={`/projects/${id}/sources`}>View Sources</Link>
           </Button>
+          <Button variant="outline" asChild>
+            <Link href={`/projects/${id}/quotes`}>Gold Quotes</Link>
+          </Button>
         </CardContent>
       </Card>
+
+      {/* Voice DNA */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Voice DNA</h2>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <div className="lg:col-span-1">
+            <VoiceConfidenceDashboard projectId={id} />
+          </div>
+          <div className="lg:col-span-2">
+            <VoiceDnaViewer projectId={id} />
+          </div>
+        </div>
+      </div>
 
       {/* Chapters */}
       <div className="space-y-4">
