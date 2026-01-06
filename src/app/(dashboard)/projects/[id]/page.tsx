@@ -14,6 +14,16 @@ const statusLabels: Record<string, string> = {
   complete: 'Complete',
 }
 
+interface Chapter {
+  id: string
+  current_word_count: number | null
+}
+
+function calculateWordCount(chapters: Chapter[] | null): number {
+  if (chapters === null) return 0
+  return chapters.reduce((sum, ch) => sum + (ch.current_word_count ?? 0), 0)
+}
+
 export default async function ProjectDetailPage({
   params,
 }: {
@@ -22,25 +32,22 @@ export default async function ProjectDetailPage({
   const { id } = await params
   const supabase = await createClient()
 
-  // Fetch project
   const { data: project, error } = await supabase
     .from('projects')
     .select('*')
     .eq('id', id)
     .single()
 
-  if (error || !project) {
+  if (error !== null) {
     notFound()
   }
 
-  // Fetch chapters
   const { data: chapters } = await supabase
     .from('chapters')
     .select('*')
     .eq('project_id', id)
     .order('order_index', { ascending: true })
 
-  // Fetch questions count
   const { count: totalQuestions } = await supabase
     .from('questions')
     .select('*', { count: 'exact', head: true })
@@ -52,11 +59,7 @@ export default async function ProjectDetailPage({
     .eq('project_id', id)
     .eq('status', 'complete')
 
-  // Calculate total word count from chapters
-  const currentWordCount = chapters?.reduce(
-    (sum, ch) => sum + (ch.current_word_count || 0),
-    0
-  ) || 0
+  const currentWordCount = calculateWordCount(chapters)
 
   return (
     <div className="space-y-8">
@@ -73,17 +76,17 @@ export default async function ProjectDetailPage({
             <span className="text-zinc-300">/</span>
           </div>
           <h1 className="mt-1 text-3xl font-bold">{project.title}</h1>
-          {project.description && (
+          {project.description !== null && project.description !== '' && (
             <p className="mt-2 max-w-2xl text-zinc-600 dark:text-zinc-400">
               {project.description}
             </p>
           )}
           <div className="mt-3 flex items-center gap-3">
             <span className="rounded-full bg-zinc-100 px-3 py-1 text-sm dark:bg-zinc-800">
-              {statusLabels[project.status || 'draft']}
+              {statusLabels[project.status ?? 'draft']}
             </span>
             <span className="text-sm text-zinc-500">
-              Target: {(project.target_word_count || 50000).toLocaleString()} words
+              Target: {(project.target_word_count ?? 50000).toLocaleString()} words
             </span>
           </div>
         </div>
@@ -91,11 +94,11 @@ export default async function ProjectDetailPage({
 
       {/* Stats */}
       <ProjectStats
-        chaptersCount={chapters?.length || 0}
-        questionsAnswered={answeredQuestions || 0}
-        questionsTotal={totalQuestions || 0}
+        chaptersCount={chapters?.length ?? 0}
+        questionsAnswered={answeredQuestions ?? 0}
+        questionsTotal={totalQuestions ?? 0}
         currentWordCount={currentWordCount}
-        targetWordCount={project.target_word_count || 50000}
+        targetWordCount={project.target_word_count ?? 50000}
       />
 
       {/* Quick Actions */}

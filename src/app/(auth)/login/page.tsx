@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense } from 'react'
+import { Suspense, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,17 +8,18 @@ import { useSearchParams } from 'next/navigation'
 
 function LoginForm() {
   const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirectTo') || '/dashboard'
+  const redirectParam = searchParams.get('redirectTo')
+  const redirectTo = redirectParam !== null && redirectParam !== '' ? redirectParam : '/dashboard'
 
-  async function signInWithGoogle() {
+  const handleSignIn = useCallback(() => {
     const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
+    void supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`,
       },
     })
-  }
+  }, [redirectTo])
 
   return (
     <Card>
@@ -27,7 +28,7 @@ function LoginForm() {
         <CardDescription>Sign in to continue writing your book</CardDescription>
       </CardHeader>
       <CardContent>
-        <Button onClick={signInWithGoogle} className="w-full" size="lg">
+        <Button onClick={handleSignIn} className="w-full" size="lg">
           <GoogleIcon />
           Sign in with Google
         </Button>

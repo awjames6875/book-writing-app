@@ -641,6 +641,229 @@ export type Database = {
           },
         ]
       }
+      // NEW PRD TABLES
+      voice_dna: {
+        Row: {
+          id: string
+          project_id: string
+          category: Database["public"]["Enums"]["voice_dna_category"]
+          pattern: string
+          context: string | null
+          source_transcript_id: string | null
+          frequency: number
+          confidence_score: number
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          category: Database["public"]["Enums"]["voice_dna_category"]
+          pattern: string
+          context?: string | null
+          source_transcript_id?: string | null
+          frequency?: number
+          confidence_score?: number
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          category?: Database["public"]["Enums"]["voice_dna_category"]
+          pattern?: string
+          context?: string | null
+          source_transcript_id?: string | null
+          frequency?: number
+          confidence_score?: number
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_dna_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voice_dna_source_transcript_id_fkey"
+            columns: ["source_transcript_id"]
+            isOneToOne: false
+            referencedRelation: "transcripts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      voice_confidence: {
+        Row: {
+          id: string
+          project_id: string
+          aspect: string
+          current_score: number
+          target_score: number
+          transcripts_analyzed: number
+          last_updated: string | null
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          aspect: string
+          current_score?: number
+          target_score?: number
+          transcripts_analyzed?: number
+          last_updated?: string | null
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          aspect?: string
+          current_score?: number
+          target_score?: number
+          transcripts_analyzed?: number
+          last_updated?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_confidence_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          id: string
+          project_id: string
+          quote_text: string
+          category: string | null
+          source_transcript_id: string | null
+          chapter_suggested: number[] | null
+          social_media_ready: boolean
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          quote_text: string
+          category?: string | null
+          source_transcript_id?: string | null
+          chapter_suggested?: number[] | null
+          social_media_ready?: boolean
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          quote_text?: string
+          category?: string | null
+          source_transcript_id?: string | null
+          chapter_suggested?: number[] | null
+          social_media_ready?: boolean
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_source_transcript_id_fkey"
+            columns: ["source_transcript_id"]
+            isOneToOne: false
+            referencedRelation: "transcripts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      characters: {
+        Row: {
+          id: string
+          project_id: string
+          name: string
+          role: string | null
+          description: string | null
+          chapters_appearing: number[] | null
+          notes: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          name: string
+          role?: string | null
+          description?: string | null
+          chapters_appearing?: number[] | null
+          notes?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          name?: string
+          role?: string | null
+          description?: string | null
+          chapters_appearing?: number[] | null
+          notes?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "characters_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_sections: {
+        Row: {
+          id: string
+          project_id: string
+          section_name: string
+          question_start: number
+          question_end: number
+          completion_percentage: number
+          status: Database["public"]["Enums"]["question_section_status"]
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          section_name: string
+          question_start: number
+          question_end: number
+          completion_percentage?: number
+          status?: Database["public"]["Enums"]["question_section_status"]
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          section_name?: string
+          question_start?: number
+          question_end?: number
+          completion_percentage?: number
+          status?: Database["public"]["Enums"]["question_section_status"]
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_sections_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -668,6 +891,10 @@ export type Database = {
       recording_status: "uploading" | "transcribing" | "processed" | "failed"
       source_status: "uploading" | "processing" | "ready" | "failed"
       source_type: "pdf" | "youtube" | "article" | "audio" | "text" | "image"
+      // NEW PRD ENUMS
+      voice_dna_category: "phrase" | "rhythm" | "teaching" | "story" | "quote"
+      question_section_status: "not_started" | "in_progress" | "complete"
+      upload_type: "transcript" | "research" | "youtube" | "summary" | "pdf" | "audio" | "other"
     }
     CompositeTypes: {
       [_ in never]: never

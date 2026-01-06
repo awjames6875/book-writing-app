@@ -18,7 +18,7 @@ export default async function RecordPage({
     .eq('id', id)
     .single()
 
-  if (error !== null || project === null) {
+  if (error !== null) {
     notFound()
   }
 

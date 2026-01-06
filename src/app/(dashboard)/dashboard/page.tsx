@@ -3,15 +3,24 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
+function getFirstName(user: { user_metadata?: Record<string, unknown> } | null): string {
+  if (user === null) return 'there'
+  const fullName = user.user_metadata?.full_name
+  if (typeof fullName !== 'string' || fullName === '') return 'there'
+  const parts = fullName.split(' ')
+  return parts[0] ?? 'there'
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  const { data: user } = await supabase.auth.getUser()
+  const { data: userData } = await supabase.auth.getUser()
   const { count } = await supabase
     .from('projects')
     .select('*', { count: 'exact', head: true })
 
-  const firstName = user.user?.user_metadata?.full_name?.split(' ')[0] || 'there'
+  const firstName = getFirstName(userData.user)
+  const projectCount = count ?? 0
 
   return (
     <div className="space-y-8">
@@ -29,7 +38,7 @@ export default async function DashboardPage() {
             <CardDescription>Books you&apos;re working on</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold">{count || 0}</p>
+            <p className="text-4xl font-bold">{projectCount}</p>
             <Button asChild className="mt-4 w-full">
               <Link href="/projects">View Projects</Link>
             </Button>
