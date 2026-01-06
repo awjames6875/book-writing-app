@@ -879,6 +879,92 @@ export type Database = {
           },
         ]
       }
+      // Competitor Analysis tables
+      competitor_books: {
+        Row: {
+          id: string
+          project_id: string
+          title: string
+          author: string | null
+          amazon_url: string | null
+          analysis_summary: string | null
+          pain_points: string[] | null
+          missing_topics: string[] | null
+          reader_expectations: string[] | null
+          differentiation_recommendations: string[] | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          title: string
+          author?: string | null
+          amazon_url?: string | null
+          analysis_summary?: string | null
+          pain_points?: string[] | null
+          missing_topics?: string[] | null
+          reader_expectations?: string[] | null
+          differentiation_recommendations?: string[] | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          title?: string
+          author?: string | null
+          amazon_url?: string | null
+          analysis_summary?: string | null
+          pain_points?: string[] | null
+          missing_topics?: string[] | null
+          reader_expectations?: string[] | null
+          differentiation_recommendations?: string[] | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitor_books_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitor_reviews: {
+        Row: {
+          id: string
+          book_id: string
+          rating: number | null
+          review_text: string
+          pain_points: string[] | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          book_id: string
+          rating?: number | null
+          review_text: string
+          pain_points?: string[] | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          book_id?: string
+          rating?: number | null
+          review_text?: string
+          pain_points?: string[] | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitor_reviews_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "competitor_books"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
