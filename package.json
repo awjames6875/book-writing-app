@@ -14,7 +14,7 @@
     "@hookform/resolvers": "^3.10.0",
     "@supabase/auth-helpers-nextjs": "^0.8.7",
     "@supabase/ssr": "^0.1.0",
-    "@supabase/supabase-js": "^2.87.3",
+    "@supabase/supabase-js": "^2.45.0",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.5",
     "lucide-react": "^0.344.0",
@@ -24,6 +24,7 @@
     "react-dom": "^18.3.0",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.68.0",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^2.2.1",
     "zod": "^3.25.76"
   },

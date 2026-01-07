@@ -5,11 +5,31 @@ import { motion } from "framer-motion";
 import { Plus, Search, Filter, CheckCircle2, Circle, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Select } from "@/components/ui/select";
 
-const questions = [
+// Mock chapters data - in production, this would come from the database
+const mockChapters = [
+  { id: "ch-1", title: "Chapter 1: The Awakening" },
+  { id: "ch-2", title: "Chapter 2: The Struggle" },
+  { id: "ch-3", title: "Chapter 3: The Transformation" },
+  { id: "ch-4", title: "Chapter 4: The Message" },
+];
+
+interface Question {
+  id: string;
+  text: string;
+  chapter_id: string | null;
+  chapter: string;
+  status: string;
+  answeredAt?: string;
+}
+
+const questions: Question[] = [
   {
     id: "1",
     text: "What was the moment that changed everything for you?",
+    chapter_id: "ch-1",
     chapter: "Chapter 1: The Awakening",
     status: "complete",
     answeredAt: "2 days ago",
@@ -17,6 +37,7 @@ const questions = [
   {
     id: "2",
     text: "How did you feel when you first realized you needed to change?",
+    chapter_id: "ch-1",
     chapter: "Chapter 1: The Awakening",
     status: "complete",
     answeredAt: "2 days ago",
@@ -24,6 +45,7 @@ const questions = [
   {
     id: "3",
     text: "What were the biggest obstacles you faced?",
+    chapter_id: "ch-2",
     chapter: "Chapter 2: The Struggle",
     status: "partial",
     answeredAt: "1 week ago",
@@ -31,18 +53,21 @@ const questions = [
   {
     id: "4",
     text: "Who were the key people who supported you?",
+    chapter_id: "ch-2",
     chapter: "Chapter 2: The Struggle",
     status: "unanswered",
   },
   {
     id: "5",
     text: "What lessons did you learn from your experience?",
+    chapter_id: "ch-3",
     chapter: "Chapter 3: The Transformation",
     status: "unanswered",
   },
   {
     id: "6",
     text: "How do you want readers to feel after reading your story?",
+    chapter_id: "ch-4",
     chapter: "Chapter 4: The Message",
     status: "unanswered",
   },
@@ -56,10 +81,51 @@ const statusConfig = {
 
 export default function QuestionsPage() {
   const [filter, setFilter] = useState<"all" | "complete" | "partial" | "unanswered">("all");
+  const [questionsList, setQuestionsList] = useState(questions);
 
-  const filteredQuestions = filter === "all" 
-    ? questions 
-    : questions.filter(q => q.status === filter);
+  const filteredQuestions = filter === "all"
+    ? questionsList
+    : questionsList.filter(q => q.status === filter);
+
+  // Handle chapter assignment change
+  const handleChapterChange = async (questionId: string, newChapterId: string) => {
+    try {
+      // Call the API to update the question's chapter
+      const response = await fetch(`/api/questions/${questionId}/assign-chapter`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          chapter_id: newChapterId === "none" ? null : newChapterId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update question chapter");
+      }
+
+      // Update local state
+      setQuestionsList((prev) =>
+        prev.map((q) =>
+          q.id === questionId
+            ? {
+                ...q,
+                chapter_id: newChapterId === "none" ? null : newChapterId,
+                chapter:
+                  newChapterId === "none"
+                    ? "No chapter"
+                    : mockChapters.find((ch) => ch.id === newChapterId)?.title ||
+                      "Unknown",
+              }
+            : q
+        )
+      );
+    } catch (error) {
+      console.error("Error updating question chapter:", error);
+      alert("Failed to update question chapter. Please try again.");
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -172,8 +238,25 @@ export default function QuestionsPage() {
                           {statusInfo.label}
                         </span>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <span>{question.chapter}</span>
+                      <div className="flex items-center gap-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="text-gray-600">Chapter:</span>
+                          <Badge variant="info" className="font-medium">
+                            {question.chapter || "No chapter"}
+                          </Badge>
+                        </div>
+                        <Select
+                          value={question.chapter_id || "none"}
+                          onChange={(e) => handleChapterChange(question.id, e.target.value)}
+                          className="text-sm h-8 w-64"
+                        >
+                          <option value="none">No chapter</option>
+                          {mockChapters.map((chapter) => (
+                            <option key={chapter.id} value={chapter.id}>
+                              {chapter.title}
+                            </option>
+                          ))}
+                        </Select>
                         {question.answeredAt && (
                           <span className="text-gray-400">• Answered {question.answeredAt}</span>
                         )}

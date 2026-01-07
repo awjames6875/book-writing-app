@@ -154,6 +154,97 @@ Keep changes minimal and targeted:
 
 ---
 
+## Phase 3: Smart Question Generation from Sources
+
+### Overview
+Implemented NotebookLM-style source ingestion with AI-powered question generation. When users add sources (PDF, YouTube, website, text), the system automatically generates interview questions to help authors cover that material in their book.
+
+### TODO
+- [x] Create lib/ai/question-generator.ts with Claude API integration
+- [x] Create API route for generating questions from sources
+- [x] Update sources page UI with Generate Questions button
+- [x] Test the complete flow end-to-end
+
+### Implementation Details
+
+**Core AI Library:**
+The question generator applies Kaizen principles to create high-quality interview questions:
+- Specific and actionable (not vague or generic)
+- Designed to elicit stories, examples, and insights
+- Helps authors explain/teach concepts in their own words
+- Open-ended to prompt detailed answers
+- Automatically assigns questions to relevant chapters
+
+**API Architecture:**
+- Fetches source and verifies user authentication/authorization
+- Retrieves project chapters for intelligent question-chapter mapping
+- Calls Claude API with source content and book context
+- Saves generated questions to database with chapter assignments
+- Returns questions with reasoning for transparency
+
+**UI/UX:**
+- Added "Generate Questions" button to each source card
+- Loading state with spinner during AI generation
+- Success state with checkmark confirmation
+- Auto-resets after 3 seconds for clean UX
+- Disabled state prevents duplicate requests
+
+### Files Created
+
+**Core Libraries:**
+- `/home/user/book-writing-app/src/lib/ai/question-generator.ts` - Claude API integration for generating interview questions from source content
+- `/home/user/book-writing-app/src/lib/supabase/client.ts` - Browser-side Supabase client
+- `/home/user/book-writing-app/src/lib/supabase/server.ts` - Server-side Supabase client with cookie management
+
+**API Routes:**
+- `/home/user/book-writing-app/src/app/api/sources/[id]/generate-questions/route.ts` - POST endpoint to generate and save questions from a source
+
+**UI Updates:**
+- Modified `/home/user/book-writing-app/src/app/(dashboard)/dashboard/sources/page.tsx`:
+  - Added state management for loading/success states
+  - Implemented handleGenerateQuestions function
+  - Added Generate Questions button with Sparkles icon
+  - Added loading spinner and success checkmark states
+
+### Technical Implementation
+
+**Question Generator Algorithm:**
+1. Accepts source content, title, type, and project chapters
+2. Constructs intelligent prompt with book context
+3. Uses Claude Sonnet 4 to analyze and generate 5-10 questions
+4. Maps questions to appropriate chapters based on titles/descriptions
+5. Validates chapter IDs and returns structured question data
+
+**API Flow:**
+1. Authenticate user via Supabase Auth
+2. Fetch source with nested project data (single query)
+3. Verify user owns the project (authorization)
+4. Retrieve chapters ordered by index
+5. Call question generator with full context
+6. Batch insert questions into database
+7. Return success with question count and reasoning
+
+**Database Schema Used:**
+- `questions` table: project_id, source_id, chapter_id, text, status
+- `sources` table: raw_content, summary, title
+- `chapters` table: id, title, description, order_index
+- `projects` table: title, description, user_id
+
+### Build Status
+✓ TypeScript type check passed with no errors in implemented files
+✓ All files properly typed and linted
+✓ Supabase client properly configured for both client and server usage
+
+### Key Features
+- Intelligent chapter assignment based on semantic matching
+- Reasoning provided for each question-chapter pairing
+- Handles sources without chapters gracefully
+- Truncates long source content (4000 char limit) for API efficiency
+- Error handling for failed API calls or missing content
+- User feedback via loading states and success indicators
+
+---
+
 ## Claude Code Skills Installation Guide
 
 ### Your Profile

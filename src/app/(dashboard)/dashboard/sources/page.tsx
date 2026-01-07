@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, FileText, Youtube, Link as LinkIcon, Upload, Search } from "lucide-react";
+import { Plus, FileText, Youtube, Link as LinkIcon, Upload, Search, Sparkles, Loader2, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { AddSourceDialog } from "@/components/AddSourceDialog";
 
 const sources = [
   {
@@ -52,6 +54,49 @@ const typeConfig = {
 };
 
 export default function SourcesPage() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [generatingQuestions, setGeneratingQuestions] = useState<{ [key: string]: boolean }>({});
+  const [generatedSuccess, setGeneratedSuccess] = useState<{ [key: string]: boolean }>({});
+
+  // TODO: Replace with actual project ID from URL params or context
+  const projectId = "demo-project-id";
+
+  const handleSourceAdded = () => {
+    // TODO: Refresh the sources list from the API
+    console.log("Source added successfully");
+    // In a real implementation, you would fetch the updated sources list here
+  };
+
+  const handleGenerateQuestions = async (sourceId: string) => {
+    setGeneratingQuestions((prev) => ({ ...prev, [sourceId]: true }));
+    setGeneratedSuccess((prev) => ({ ...prev, [sourceId]: false }));
+
+    try {
+      const response = await fetch(`/api/sources/${sourceId}/generate-questions`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate questions");
+      }
+
+      const data = await response.json();
+      console.log(`Generated ${data.count} questions from source ${sourceId}`);
+
+      setGeneratedSuccess((prev) => ({ ...prev, [sourceId]: true }));
+
+      // Reset success state after 3 seconds
+      setTimeout(() => {
+        setGeneratedSuccess((prev) => ({ ...prev, [sourceId]: false }));
+      }, 3000);
+    } catch (error) {
+      console.error("Error generating questions:", error);
+      alert("Failed to generate questions. Please try again.");
+    } finally {
+      setGeneratingQuestions((prev) => ({ ...prev, [sourceId]: false }));
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -60,7 +105,12 @@ export default function SourcesPage() {
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Source Library</h1>
           <p className="text-gray-600">Upload and manage your research materials</p>
         </div>
-        <Button variant="gradient" size="lg" className="flex items-center gap-2">
+        <Button
+          variant="gradient"
+          size="lg"
+          className="flex items-center gap-2"
+          onClick={() => setDialogOpen(true)}
+        >
           <Plus className="h-5 w-5" />
           Add Source
         </Button>
@@ -80,7 +130,10 @@ export default function SourcesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
           >
-            <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-purple-200 group">
+            <Card
+              className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-purple-200 group"
+              onClick={() => setDialogOpen(true)}
+            >
               <CardContent className="p-6 text-center">
                 <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${option.color} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
                   <option.icon className="h-7 w-7 text-white" />
@@ -142,13 +195,47 @@ export default function SourcesPage() {
                       ))}
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500">Added {source.date}</p>
+                  <div className="flex items-center justify-between pt-2">
+                    <p className="text-xs text-gray-500">Added {source.date}</p>
+                    <Button
+                      size="sm"
+                      variant={generatedSuccess[source.id] ? "outline" : "default"}
+                      onClick={() => handleGenerateQuestions(source.id)}
+                      disabled={generatingQuestions[source.id] || generatedSuccess[source.id]}
+                      className="flex items-center gap-2"
+                    >
+                      {generatingQuestions[source.id] ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Generating...
+                        </>
+                      ) : generatedSuccess[source.id] ? (
+                        <>
+                          <CheckCircle className="h-4 w-4" />
+                          Generated
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-4 w-4" />
+                          Generate Questions
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
           );
         })}
       </div>
+
+      {/* Add Source Dialog */}
+      <AddSourceDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        projectId={projectId}
+        onSourceAdded={handleSourceAdded}
+      />
     </div>
   );
 }
