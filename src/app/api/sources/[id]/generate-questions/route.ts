@@ -27,6 +27,7 @@ export async function POST(
         id,
         project_id,
         title,
+        source_type,
         raw_content,
         summary,
         projects (
@@ -43,6 +44,7 @@ export async function POST(
           id: string
           project_id: string
           title: string
+          source_type: string
           raw_content: string | null
           summary: string | null
           projects: {
@@ -83,7 +85,7 @@ export async function POST(
     const generatedQuestions = await generateQuestionsFromSource({
       sourceContent: source.raw_content,
       sourceTitle: source.title,
-      sourceType: 'text', // You can enhance this based on source.source_type
+      sourceType: source.source_type,
       projectId: source.project_id,
       chapters: chapters || [],
     })

@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Loader2, CheckCircle2, ChevronRight, ChevronLeft } from "lucide-react";
+import { toast } from "sonner";
 
 interface BookContext {
   bookType: string;
@@ -115,7 +116,7 @@ export function ProjectContextWizard({
       }, 1500);
     } catch (error) {
       console.error("Error saving context:", error);
-      alert("Failed to save book context. Please try again.");
+      toast.error("Failed to save book context. Please try again.");
     } finally {
       setIsLoading(false);
     }
