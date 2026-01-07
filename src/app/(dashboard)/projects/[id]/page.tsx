@@ -139,6 +139,12 @@ export default async function ProjectDetailPage({
           <Button variant="outline" asChild>
             <Link href={`/projects/${id}/competitors`}>Competitors</Link>
           </Button>
+          <Button variant="outline" asChild>
+            <Link href={`/projects/${id}/manuscript`}>View Manuscript</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href={`/projects/${id}/export`}>Export</Link>
+          </Button>
         </CardContent>
       </Card>
 
