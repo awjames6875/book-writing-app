@@ -1,17 +1,63 @@
 'use client'
 
-import { Suspense, useCallback } from 'react'
+import { Suspense, useCallback, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useSearchParams } from 'next/navigation'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 function LoginForm() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const redirectParam = searchParams.get('redirectTo')
   const redirectTo = redirectParam !== null && redirectParam !== '' ? redirectParam : '/dashboard'
 
-  const handleSignIn = useCallback(() => {
+  const [isSignUp, setIsSignUp] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
+
+  const handleEmailAuth = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+    setMessage(null)
+
+    const supabase = createClient()
+
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback?redirectTo=${encodeURIComponent(redirectTo)}`,
+        },
+      })
+      if (error) {
+        setError(error.message)
+      } else {
+        setMessage('Check your email for the confirmation link!')
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      if (error) {
+        setError(error.message)
+      } else {
+        router.push(redirectTo)
+      }
+    }
+
+    setLoading(false)
+  }, [email, password, isSignUp, redirectTo, router])
+
+  const handleGoogleSignIn = useCallback(() => {
     const supabase = createClient()
     void supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -22,15 +68,77 @@ function LoginForm() {
   }, [redirectTo])
 
   return (
-    <Card>
+    <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle>Welcome back</CardTitle>
-        <CardDescription>Sign in to continue writing your book</CardDescription>
+        <CardTitle>{isSignUp ? 'Create Account' : 'Welcome back'}</CardTitle>
+        <CardDescription>
+          {isSignUp ? 'Sign up to start writing your book' : 'Sign in to continue writing your book'}
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <Button onClick={handleSignIn} className="w-full" size="lg">
+      <CardContent className="space-y-4">
+        <form onSubmit={handleEmailAuth} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+            />
+          </div>
+
+          {error && (
+            <p className="text-sm text-red-600">{error}</p>
+          )}
+          {message && (
+            <p className="text-sm text-green-600">{message}</p>
+          )}
+
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
+          </Button>
+        </form>
+
+        <div className="text-center text-sm">
+          <button
+            type="button"
+            onClick={() => {
+              setIsSignUp(!isSignUp)
+              setError(null)
+              setMessage(null)
+            }}
+            className="text-blue-600 hover:underline"
+          >
+            {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
+          </button>
+        </div>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+          </div>
+        </div>
+
+        <Button onClick={handleGoogleSignIn} variant="outline" className="w-full" size="lg">
           <GoogleIcon />
-          Sign in with Google
+          Google
         </Button>
       </CardContent>
     </Card>
@@ -47,7 +155,7 @@ export default function LoginPage() {
 
 function LoginSkeleton() {
   return (
-    <Card>
+    <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <CardTitle>Welcome back</CardTitle>
         <CardDescription>Sign in to continue writing your book</CardDescription>
