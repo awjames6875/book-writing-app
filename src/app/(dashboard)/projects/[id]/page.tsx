@@ -8,6 +8,7 @@ import { CreateChapterDialog } from '@/components/CreateChapterDialog'
 import { ProjectStats } from '@/components/ProjectStats'
 import { VoiceDnaViewer } from '@/components/VoiceDnaViewer'
 import { VoiceConfidenceDashboard } from '@/components/VoiceConfidenceDashboard'
+import { BookContextButton } from '@/components/BookContextButton'
 
 const statusLabels: Record<string, string> = {
   draft: 'Draft',
@@ -109,6 +110,10 @@ export default async function ProjectDetailPage({
           <CardTitle className="text-lg">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
+          <BookContextButton
+            projectId={id}
+            bookContext={project.book_context as { bookType: string; targetAudience: string; mainMessage: string; uniqueQualification: string; toneStyle: string } | null}
+          />
           <Button variant="outline" asChild>
             <Link href={`/projects/${id}/questions`}>Manage Questions</Link>
           </Button>
